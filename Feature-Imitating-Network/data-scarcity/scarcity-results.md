@@ -1,10 +1,26 @@
 # Data-scarcity results
 
+## Paper numbers: 7 training users, 5 seeds — `data_scarcity.ipynb`
+
+Seeds 0-4, 9 random users (never user 30): the first 7 train, the next 2 validate, the other 27 test; 150 epochs,
+batch 256. FIN heads have dropout 0.5 after the hidden layer; the pretrained FIN is frozen, the random-init FIN is
+trained with the head. CNN: Ignatov's network as his code runs it (hstack(x, y, z) -> (200, 3), dropout 85 %).
+Mean ± s.d. over seeds; curves in `data_scarcity_curves.npz`, figure `scarcity_panels.*`.
+
+| model | accuracy, last epoch | accuracy, best val. epoch |
+|---|---:|---:|
+| CNN + 40 statistical | 0.836 ± 0.037 | 0.813 ± 0.063 |
+| CNN + 3 FIN features | 0.834 ± 0.028 | 0.814 ± 0.039 |
+| FIN, random init | 0.804 ± 0.025 | 0.786 ± 0.071 |
+| FIN, pretrained | 0.832 ± 0.028 | 0.839 ± 0.016 |
+| FIN + 40, random init | 0.861 ± 0.020 | 0.841 ± 0.042 |
+| FIN + 40, pretrained | **0.887 ± 0.011** | **0.868 ± 0.025** |
+
 The classifier is the same everywhere unless noted: FIN embedding of each axis -> Dense 128 -> softmax, no
 hand-made features, 60 epochs, batch 256. "Frozen" = the pretrained FIN stays fixed and only the head learns;
 the random-init FIN trains together with the head. Test accuracy after the last epoch.
 
-## 7 training users, 5 seeds — `data_scarcity_real_warped.ipynb`
+## 7 training users, 5 seeds — `data_scarcity_real_warped.ipynb` (notebook removed)
 
 Training users 12, 18, 19, 20, 31, 34, 36; test on the other 29 WISDM users (7,710 windows). Seeds 42, 0, 1, 2, 3:
 the seed sets the warped windows, the FIN pretraining and the head training. No flip.
@@ -43,9 +59,9 @@ Different users, seeds or notebook versions than above, so compare only within a
 
 | experiment | training users | seeds | FIN pretraining | pretrained FIN | random-init | notes |
 |---|---|---:|---|---:|---:|---|
-| `data_scarcity.ipynb` | 7 random (5 draws) | 5 | warped, frozen | 0.820 | 0.802 | pretrained and trainable: 0.814 |
-| `data_scarcity.ipynb` | 2 random (5 draws) | 5 | warped, frozen | 0.673 | 0.630 | pretrained and trainable: 0.643 |
+| old `data_scarcity.ipynb` (notebook removed) | 7 random (5 draws) | 5 | warped, frozen | 0.820 | 0.802 | pretrained and trainable: 0.814 |
+| old `data_scarcity.ipynb` (notebook removed) | 2 random (5 draws) | 5 | warped, frozen | 0.673 | 0.630 | pretrained and trainable: 0.643 |
 | 150 epochs (notebook removed) | 7 random (2 draws) | 2 | warped, frozen | 0.838 at epoch 11 | 0.833 best (epoch 27), 0.824 at 150 | how fast each model gets there |
-| MotionSense only (earlier version of `data_scarcity_motionsense.ipynb`) | 2, 3, 9, 11, 16, 20, 25 | 1 | MotionSense, frozen | 0.843 | 0.797 | |
+| MotionSense only (`data_scarcity_motionsense.ipynb`, notebook removed) | 2, 3, 9, 11, 16, 20, 25 | 1 | MotionSense, frozen | 0.843 | 0.797 | |
 | MotionSense + 2 users (notebook removed) | 23, 29 | 1 | MotionSense + the 2 users' windows, frozen | 0.625 | 0.529 | random-init reaches 0.71 at epoch 7, then overfits |
-| plain CNN (earlier version of `fin_vs_cnn.ipynb`) | 7 random (5 draws) | 5 | warped, frozen | 0.820 | — | plain CNN (Conv2D 32 -> Conv2D 64 -> Dense 128): 0.737 |
+| plain CNN (`fin_vs_cnn.ipynb`, notebook removed) | 7 random (5 draws) | 5 | warped, frozen | 0.820 | — | plain CNN (Conv2D 32 -> Conv2D 64 -> Dense 128): 0.737 |

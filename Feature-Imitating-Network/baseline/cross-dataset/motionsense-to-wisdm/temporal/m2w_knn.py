@@ -18,7 +18,10 @@ from wisdm_windowing import temporal_axis
 
 print('loading the dataset')
 
-windows_train, _, labels_train = ms.window_raw()                     # all 24 MotionSense users
+windows_ms, users_ms, labels_ms = ms.window_raw()
+held_out = users_ms >= 19                                            # MotionSense users 19-24, the in-dataset test
+windows_train, labels_train = windows_ms[~held_out], labels_ms[~held_out]   # MotionSense users 1-18
+windows_ms_test, labels_ms_test = windows_ms[held_out], labels_ms[held_out]
 windows_test, labels_test = ww.load_splits()["test"]                 # WISDM users 27-36
 
 # Flip: every training window once more, rotated 180 degrees about y (x and z change sign)
@@ -35,6 +38,7 @@ def features(windows):
 
 data_train = features(windows_train)
 data_test = features(windows_test)
+data_ms_test = features(windows_ms_test)
 print(str(len(data_train)) + " training windows, loading done, " + str(data_train.shape[1]) + " features")
 
 # Classification
@@ -42,6 +46,7 @@ print(str(len(data_train)) + " training windows, loading done, " + str(data_trai
 scaler = StandardScaler()
 data_train = scaler.fit_transform(data_train)
 data_test = scaler.transform(data_test)
+data_ms_test = scaler.transform(data_ms_test)
 
 clf = KNeighborsClassifier(n_neighbors=1, p=1)
 clf.fit(data_train, labels_train)
@@ -50,3 +55,8 @@ predictions = clf.predict(data_test)
 
 print('WISDM users 27-36 accuracy:' + str(np.sum(predictions == labels_test)/predictions.shape[0]))
 print(classification_report(labels_test, predictions, target_names=ACTIVITIES, digits = 4))
+
+predictions = clf.predict(data_ms_test)
+
+print('MotionSense users 19-24 accuracy:' + str(np.sum(predictions == labels_ms_test)/predictions.shape[0]))
+print(classification_report(labels_ms_test, predictions, target_names=ACTIVITIES, digits = 4))

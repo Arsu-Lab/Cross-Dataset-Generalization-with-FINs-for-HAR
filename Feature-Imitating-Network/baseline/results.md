@@ -57,15 +57,32 @@ Trained on WISDM users 1-26 (7,350 windows of `data-processing/wisdm_windowing.p
 
 ## MotionSense -> WISDM
 
-Trained on all 24 MotionSense users (5,193 windows) plus each of them flipped (10,386), tested on WISDM users 27-36 (3,017 windows of `data-processing/wisdm_windowing.py`).
+Trained on MotionSense users 1-18 plus each window flipped, tested on WISDM users 27-36 (3,017 windows of
+`data-processing/wisdm_windowing.py`) and, as the in-dataset reference, on MotionSense users 19-24. The same trained
+model is scored on both, as in WISDM -> MotionSense.
+
+### Test: WISDM users 27-36
 
 | features | model | script | accuracy | macro F1 | Jogging | Walking | Upstairs | Downstairs | Sitting | Standing |
 |---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| 40 statistical | 1-NN | `statistical/m2w_knn.py` | 0.7149 | 0.6985 | 0.8361 | 0.7500 | 0.4587 | 0.4676 | 0.8323 | 0.8462 |
-| 40 statistical | Logistic regression | `statistical/m2w_log.py` | 0.8127 | 0.7655 | 0.8617 | 0.8959 | 0.4992 | 0.5167 | 0.9153 | 0.9043 |
-| 40 statistical | Random forest | `statistical/m2w_random_forest.py` | 0.8059 ± 0.0045 | 0.7774 ± 0.0040 | 0.8740 | 0.8491 | 0.5782 | 0.5698 | 0.9036 | 0.8896 |
-| 40 statistical | XGBoost | `statistical/m2w_xgb.py` | 0.7971 ± 0.0000 | 0.7593 ± 0.0000 | 0.8922 | 0.8242 | 0.5825 | 0.5714 | 0.7912 | 0.8943 |
-| 33 temporal | 1-NN | `temporal/m2w_knn.py` | 0.7696 | 0.7237 | 0.8717 | 0.8527 | 0.5044 | 0.5665 | 0.7927 | 0.7539 |
-| 33 temporal | Logistic regression | `temporal/m2w_log.py` | 0.8250 | 0.7890 | 0.8666 | 0.8963 | 0.6176 | 0.6631 | 0.8705 | 0.8202 |
-| 33 temporal | Random forest | `temporal/m2w_random_forest.py` | **0.8335 ± 0.0082** | 0.7933 ± 0.0078 | 0.8540 | 0.9477 | 0.6255 | 0.5910 | 0.8822 | 0.8590 |
-| 33 temporal | XGBoost | `temporal/m2w_xgb.py` | 0.8333 ± 0.0000 | 0.7925 ± 0.0000 | 0.8918 | 0.9297 | 0.5879 | 0.5961 | 0.8913 | 0.8580 |
+| 40 statistical | 1-NN | `statistical/m2w_knn.py` | 0.7103 | 0.6937 | 0.8511 | 0.7217 | 0.4429 | 0.4593 | 0.8437 | 0.8436 |
+| 40 statistical | Logistic regression | `statistical/m2w_log.py` | 0.7882 | 0.7429 | 0.8286 | 0.8770 | 0.4783 | 0.4944 | 0.8986 | 0.8802 |
+| 40 statistical | Random forest | `statistical/m2w_random_forest.py` | 0.7705 ± 0.0061 | 0.7497 ± 0.0044 | 0.8709 | 0.7917 | 0.5282 | 0.5165 | 0.9022 | 0.8885 |
+| 40 statistical | XGBoost | `statistical/m2w_xgb.py` | 0.7690 ± 0.0000 | 0.7377 ± 0.0000 | 0.8884 | 0.7939 | 0.4829 | 0.5136 | 0.8534 | 0.8943 |
+| 33 temporal | 1-NN | `temporal/m2w_knn.py` | 0.7451 | 0.7022 | 0.8113 | 0.8602 | 0.5051 | 0.4987 | 0.7906 | 0.7477 |
+| 33 temporal | Logistic regression | `temporal/m2w_log.py` | 0.8021 | 0.7706 | 0.8495 | 0.9071 | 0.5184 | 0.6532 | 0.8707 | 0.8246 |
+| 33 temporal | Random forest | `temporal/m2w_random_forest.py` | **0.8355 ± 0.0080** | 0.7912 ± 0.0072 | 0.8586 | 0.9529 | 0.6388 | 0.5768 | 0.8745 | 0.8456 |
+| 33 temporal | XGBoost | `temporal/m2w_xgb.py` | 0.8204 ± 0.0000 | 0.7820 ± 0.0000 | 0.8396 | 0.9416 | 0.6270 | 0.5491 | 0.8798 | 0.8546 |
+
+### Test: MotionSense users 19-24
+
+| features | model | script | accuracy | macro F1 | Jogging | Walking | Upstairs | Downstairs | Sitting | Standing |
+|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 40 statistical | 1-NN | `statistical/m2w_knn.py` | 0.8490 | 0.8053 | 0.9620 | 0.8325 | 0.5552 | 0.5374 | 0.9712 | 0.9736 |
+| 40 statistical | Logistic regression | `statistical/m2w_log.py` | 0.9188 | 0.8789 | 0.9667 | 0.9315 | 0.6740 | 0.7156 | 0.9915 | 0.9938 |
+| 40 statistical | Random forest | `statistical/m2w_random_forest.py` | 0.8976 ± 0.0042 | 0.8738 ± 0.0057 | 0.9746 | 0.8458 | 0.6367 | 0.7859 | 1.0000 | 1.0000 |
+| 40 statistical | XGBoost | `statistical/m2w_xgb.py` | 0.8968 ± 0.0000 | 0.8648 ± 0.0000 | 0.9412 | 0.8694 | 0.6450 | 0.7330 | 1.0000 | 1.0000 |
+| 33 temporal | 1-NN | `temporal/m2w_knn.py` | 0.8915 | 0.8751 | 0.8860 | 0.9212 | 0.8254 | 0.8040 | 0.9002 | 0.9140 |
+| 33 temporal | Logistic regression | `temporal/m2w_log.py` | **0.9340** | 0.9124 | 0.9877 | 0.9832 | 0.8231 | 0.7839 | 0.9543 | 0.9419 |
+| 33 temporal | Random forest | `temporal/m2w_random_forest.py` | 0.9173 ± 0.0075 | 0.9007 ± 0.0084 | 0.9691 | 0.9462 | 0.8083 | 0.8000 | 0.9395 | 0.9412 |
+| 33 temporal | XGBoost | `temporal/m2w_xgb.py` | 0.9279 ± 0.0000 | 0.9103 ± 0.0000 | 0.9712 | 0.9736 | 0.8479 | 0.7941 | 0.9349 | 0.9403 |
