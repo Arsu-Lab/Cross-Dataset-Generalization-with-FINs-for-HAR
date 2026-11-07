@@ -338,7 +338,6 @@ def plot_best(path, stop=None, fin3=False, full=False, xmax=None):
 
 PANEL = [("fin40_pretrained", "FIN, pretrained", "#2a78d6"),
          ("fin40_random", "FIN, random init", "#eb6834"),
-         ("fin_random", "FIN without 40 stat., random init", "#8a8a85"),
          ("ignatov_cnn", "CNN", "#7a4fc9")]
 
 

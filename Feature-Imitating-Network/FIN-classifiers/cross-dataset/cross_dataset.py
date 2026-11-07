@@ -3,8 +3,8 @@ baselines of baseline/results.md.
 
 w2m: trained on WISDM users 1-26, tested on all 24 MotionSense users (WISDM users 27-36 are scored too, as the
      in-dataset reference).
-m2w: trained on MotionSense users 1-18, tested on WISDM users 27-36 (MotionSense users 19-24 are scored too, as the
-     in-dataset reference).
+m2w: trained on MotionSense users 1-18, tested on all 36 WISDM users and on WISDM users 27-36 (no WISDM window is
+     used for training); MotionSense users 19-24 are scored too, as the in-dataset reference.
 Every training window is used once more rotated 180 degrees about y (x and z change sign).
 
 Models, seeds 42, 0, 1, 2, 3, 60 epochs with batch 256, scored after the last epoch:
@@ -63,7 +63,9 @@ def load(direction):
     else:
         held_out = ms_users >= 19  # MotionSense users 19-24, the in-dataset test
         (x, y) = ms_windows[~held_out], ms_labels[~held_out]
-        tests = {"WISDM 27-36": data["test"], "MotionSense 19-24": (ms_windows[held_out], ms_labels[held_out])}
+        w_windows, _, w_labels = ww.window_raw()
+        tests = {"WISDM, all users": (w_windows, w_labels), "WISDM 27-36": data["test"],
+                 "MotionSense 19-24": (ms_windows[held_out], ms_labels[held_out])}
     return np.concatenate([x, x * FLIP]), np.concatenate([y, y]), tests
 
 

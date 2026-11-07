@@ -21,7 +21,7 @@ windows_ms, users_ms, labels_ms = ms.window_raw()
 held_out = users_ms >= 19                                            # MotionSense users 19-24, the in-dataset test
 windows_train, labels_train = windows_ms[~held_out], labels_ms[~held_out]   # MotionSense users 1-18
 windows_ms_test, labels_ms_test = windows_ms[held_out], labels_ms[held_out]
-windows_test, labels_test = ww.load_splits()["test"]                 # WISDM users 27-36
+windows_test, _, labels_test = ww.window_raw()                       # all 36 WISDM users (none used for training)
 
 # Flip: every training window once more, rotated 180 degrees about y (x and z change sign)
 
@@ -49,7 +49,7 @@ clf.fit(data_train, labels_train)
 
 predictions = clf.predict(data_test)
 
-print('WISDM users 27-36 accuracy:' + str(np.sum(predictions == labels_test)/predictions.shape[0]))
+print('WISDM, all users accuracy:' + str(np.sum(predictions == labels_test)/predictions.shape[0]))
 print(classification_report(labels_test, predictions, target_names=ACTIVITIES, digits = 4))
 
 predictions = clf.predict(data_ms_test)
