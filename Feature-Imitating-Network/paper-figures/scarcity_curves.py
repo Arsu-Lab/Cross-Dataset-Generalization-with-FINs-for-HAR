@@ -1,26 +1,4 @@
-"""Figure for "Generalization to Unseen Subjects Under Scarcity Conditions": test accuracy per epoch of every model
-of the seven-user table, on the same users and with the same training.
 
-Protocol of data-scarcity/data_scarcity.ipynb and baselines_7_users.ipynb: for each seed 0-4, 9 random users (never user 30) are drawn, the first 7 train, the next 2 are the validation users
-(not used here), the remaining 27 are the test set. Neural networks train 150 epochs with batch 256; tree models have
-no epochs and are drawn as horizontal lines.
-(a) raw window only: FIN with random weights, FIN pretrained on warped windows, FIN pretrained on real + warped
-windows (pretrained FINs are frozen; pretraining uses only the training users' windows, no labels).
-(b) raw window + Ignatov's 40 statistical features: Ignatov's CNN, FIN + 40 with random weights, FIN + 40 pretrained
-on real + warped windows.
-
-The paper's figure is the `panels` step, drawn from the curves data-scarcity/data_scarcity.ipynb saves. The `train`
-step and the figures drawn from its scarcity_curves.npz (plot, pair, best) are the earlier version: Ignatov's CNN with
-a (time, axis) input and 15 % dropout, FIN heads without dropout.
-
-    python scarcity_curves.py train   # trains everything once, saves the curves to scarcity_curves.npz (~3 h)
-    python scarcity_curves.py plot    # draws scarcity_curves.eps (for the ESANN template), .pdf and .png next to the .npz
-    python scarcity_curves.py pair    # draws scarcity_pair.*: our FIN (warped) against the weakest model, Ignatov's CNN
-    python scarcity_curves.py best    # draws scarcity_best.*: the pair over all epochs, our FIN held at its best epoch
-    python scarcity_curves.py best --stop 10   # the same, our FIN held at epoch 10: scarcity_epoch10.*
-    python scarcity_curves.py panels --curves ../data-scarcity/data_scarcity_curves.npz   # the paper's figure,
-        # scarcity_panels.*: FIN + 40 pretrained and random init and Ignatov's CNN + 40, first 50 epochs
-"""
 import os
 import sys
 
@@ -35,7 +13,7 @@ import numpy as np
 
 import config as cfg
 
-FORMATS = ("eps",)  # the ESANN template takes EPS only
+FORMATS = ("eps",)
 
 SEEDS = (0, 1, 2, 3, 4)
 N_TRAIN, N_VAL = 7, 2

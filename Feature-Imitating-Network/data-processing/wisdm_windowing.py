@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.dirname(BASE_DIR))  # Feature-Imitating-Network: its config.py
+sys.path.insert(0, os.path.dirname(BASE_DIR))
 
 from config import ACTIVITIES, AXES, BANDS, FS, MAX_LAG, MIN_LAG, SEGMENT, SPLITS
 
@@ -15,8 +15,7 @@ CACHE_PATH = os.path.join(BASE_DIR, "windows_cache.npz")
 
 
 def read_raw():
-    """The original WISDM file, cleaned: every record ends with ';', a few lines hold two records,
-    some lines are empty and one record has no z value (read as 0)."""
+    """The cleaned WISDM file: every record ends with ';'. """
     with open(RAW_PATH) as f:
         lines = [line for line in f.read().replace(";", "\n").splitlines() if line.strip()]
     return io.StringIO("\n".join(lines))

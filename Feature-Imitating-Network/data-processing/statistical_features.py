@@ -12,8 +12,6 @@ def extract_basic_features(x, y, z):
     ]
     features.append(np.mean(np.sqrt(x**2 + y**2 + z**2)))
     for axis in (x, y, z):
-        # matches MATLAB hist(axis, 10): bin edges padded by half a bin width
-        # beyond min/max, unlike numpy's default edges-at-min/max histogram.
         lo, hi = axis.min(), axis.max()
         binwidth = (hi - lo) / 10 or 1.0
         edges = np.linspace(lo - binwidth / 2, hi + binwidth / 2, 11)

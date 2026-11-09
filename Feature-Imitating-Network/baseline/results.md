@@ -1,14 +1,6 @@
 # Classic baselines
 
-Every script trains on one dataset and tests on one dataset. Windows are 10 s (200 samples at 20 Hz) with 50 % overlap. The flip in the cross-dataset runs adds every training window once more rotated 180 degrees about y (x and z change sign), the phone facing the other way in the pocket.
-
-Features: **40 statistical** = Ignatov's (mean, std and mean absolute deviation per axis, average resultant acceleration, 10-bin histogram per axis); **79 combined** = the 40 plus 13 more statistics per axis; **33 temporal** = the 11 features of `config.TEMPORAL` on each axis (mean-crossing rate, autocorrelation peak and lag, dominant frequency, spectral peak and entropy, jerk std and mad, power in 0-3, 3-6 and 6-10 Hz).
-
-Models: random forest and XGBoost with 100 trees, mean ± standard deviation over seeds 42, 0, 1, 2, 3 (`python <script> <seed>`); 1-NN (Manhattan) and logistic regression have no randomness and run once. 1-NN and logistic regression are standardised, except `wisdm/statistical/wisdm_knn.py`, which (as in the original ClassicML script) runs 1-NN on the raw y-axis signal instead of the features. Activity columns are per-class F1, mean over seeds. `wisdm/temporal/wisdm_random_forest_temporal.py` is a separate experiment (several feature sets, LOSO) and is not in these tables.
-
 ## WISDM -> WISDM
-
-Ignatov's own split and windows (`ClassicML/data_processing/wisdm_data/*_200.csv`): trained on WISDM users 1-26 (7,367 windows), tested on users 27-36 (3,026 windows).
 
 | features | model | script | accuracy | macro F1 | Jogging | Walking | Upstairs | Downstairs | Sitting | Standing |
 |---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -57,9 +49,6 @@ Trained on WISDM users 1-26 (7,350 windows of `data-processing/wisdm_windowing.p
 
 ## MotionSense -> WISDM
 
-Trained on MotionSense users 1-18 plus each window flipped, tested on all 36 WISDM users (10,367 windows of
-`data-processing/wisdm_windowing.py`; no WISDM window is used for training) and, as the in-dataset reference, on
-MotionSense users 19-24. The same trained model is scored on both.
 
 ### Test: WISDM, all users
 
