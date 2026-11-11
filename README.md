@@ -27,7 +27,11 @@ python -m venv .venv
 .venv\Scripts\activate          # Linux/macOS: source .venv/bin/activate
 pip install -r requirements.txt
 ```
-
+### 2.1 Datasets
+We focus on two common datasets **WISDM v1.1** and **MotionSense** as they use similar labels, allowing us to directly compare generalization performance across
+datasets. For each dataset, we use a subject-level split, and 10-second windows
+with 50% overlap. We always ensure that each window contains data from a 
+single activity at a time.
 
 ---
 

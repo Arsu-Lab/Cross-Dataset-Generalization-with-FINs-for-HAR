@@ -18,8 +18,6 @@ CURVE = [("fin40_pretrained", "FIN + 40, pretrained", "#2a78d6", "#dae8fc"),  # 
 
 
 def bands(ax, x, items):
-    """Opaque mean +- s.d. fills (EPS has no transparency); overlaps get the product of the fills, as a multiply
-    blend would."""
     from matplotlib.colors import to_rgb
 
     for k in range(1, len(items) + 1):
@@ -31,7 +29,6 @@ def bands(ax, x, items):
 
 
 def plot(curves=CURVES, out=OUT, png_dir=None):
-    """Draws the figure from the curves .npz to `out` (EPS); png_dir: also a PNG preview there."""
     import matplotlib
 
     matplotlib.use("Agg")
@@ -40,9 +37,6 @@ def plot(curves=CURVES, out=OUT, png_dir=None):
     plt.rcParams.update({
         "font.family": "serif", "font.serif": ["cmr10"], "mathtext.fontset": "cm", "axes.formatter.use_mathtext": True,
         "axes.unicode_minus": False, "ps.fonttype": 42,
-        # 8 pt everywhere: the \footnotesize of Table 2 (CMR8 at 7.97 pt in the paper's PDF); the figure is placed at
-        # 100 % (its width is the minipage width), so these are the printed sizes
-        # the title is 10 pt, the size of the body text (CMR10 at 9.96 pt)
         "font.size": 8, "axes.titlesize": 10, "axes.labelsize": 8, "legend.fontsize": 8, "xtick.labelsize": 8,
         "ytick.labelsize": 8, "axes.linewidth": 0.6, "lines.linewidth": 1.2, "xtick.major.width": 0.6,
         "ytick.major.width": 0.6, "xtick.major.size": 2.5, "ytick.major.size": 2.5,
