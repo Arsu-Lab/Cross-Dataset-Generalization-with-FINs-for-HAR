@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.dirname(HERE))
 
 from config import ACTIVITIES, SEGMENT
 
-RAW_DIR = os.path.join(HERE, "..", "..", "datasets", "MotionSense", "B_Accelerometer_data")
+RAW_DIR = os.path.join(HERE, "..", "datasets", "MotionSense", "B_Accelerometer_data")
 CACHE_PATH = os.path.join(HERE, "motionsense_cache.npz")
 CODES = {"jog": "Jogging", "wlk": "Walking", "ups": "Upstairs", "dws": "Downstairs", "sit": "Sitting", "std": "Standing"}
 G = 9.81

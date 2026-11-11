@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.dirname(BASE_DIR))
 
 from config import ACTIVITIES, AXES, BANDS, FS, MAX_LAG, MIN_LAG, SEGMENT, SPLITS
 
-RAW_PATH = os.path.join(BASE_DIR, "..", "..", "datasets", "WISDM_ar_v1.1", "WISDM_ar_v1.1_raw.txt")
+RAW_PATH = os.path.join(BASE_DIR, "..", "datasets", "WISDM_ar_v1.1", "WISDM_ar_v1.1_raw.txt")
 CACHE_PATH = os.path.join(BASE_DIR, "windows_cache.npz")
 
 
