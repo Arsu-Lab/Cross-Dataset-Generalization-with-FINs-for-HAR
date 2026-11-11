@@ -1,7 +1,7 @@
 # ARSU Labs - Bilinear Feature Imitating Networks for Human Activity Recognition
 
 This is the code of the paper "Cross Dataset Generalization with Feature Imitating Networks for Human Activity
-Recognition" (Azamat Amanbay, Sari Saba-Sadiya).
+Recognition" (Azamat Amanbay, Sungat Serikbay, Sari Saba-Sadiya).
 
 ---
 
