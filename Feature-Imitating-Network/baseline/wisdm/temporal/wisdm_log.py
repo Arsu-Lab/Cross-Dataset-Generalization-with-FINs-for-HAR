@@ -5,37 +5,33 @@ from sklearn.metrics import classification_report
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FIN_DIR = os.path.dirname(os.path.dirname(os.path.dirname(BASE_DIR)))
+sys.path[:0] = [FIN_DIR, os.path.join(FIN_DIR, "data-processing")]
+
+import wisdm_windowing as ww
+from config import ACTIVITIES, TEMPORAL
+from wisdm_windowing import temporal_axis
+
 # Reading the data
 
 print('loading the dataset')
 
-length = 200
+data = ww.load_splits()
+windows_train = np.concatenate([data["train"][0], data["val"][0]])  # WISDM users 1-26
+labels_train = np.concatenate([data["train"][1], data["val"][1]])
+windows_test, labels_test = data["test"]                             # WISDM users 27-36
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-FIN_DIR = os.path.dirname(os.path.dirname(os.path.dirname(BASE_DIR)))
-DATA_DIR = os.path.join(os.path.dirname(FIN_DIR), "reproduction of papers", "ClassicML", "data_processing", "wisdm_data")
-sys.path[:0] = [FIN_DIR, os.path.join(FIN_DIR, "data-processing")]
+# Features: the 33 temporal features (11 per axis)
 
-from config import TEMPORAL
-from wisdm_windowing import temporal_axis
-
-
-def load(name):
-    return np.loadtxt(os.path.join(DATA_DIR, name + "_" + str(length) + ".csv"), delimiter = ',')
+def features(windows):
+    axes = [temporal_axis(windows[:, a].astype(np.float64)) for a in range(3)]
+    return np.stack([axes[a][f] for f in TEMPORAL for a in range(3)], axis=1)
 
 
-def features(axes):
-    """The 11 temporal features of config.TEMPORAL on each of the three axes: 33 per window."""
-    per_axis = [temporal_axis(a) for a in axes]
-    return np.stack([per_axis[a][f] for f in TEMPORAL for a in range(3)], axis=1)
-
-
-data_train = features([load("data_x"), load("data_y"), load("data_z")])
-data_test = features([load("data_x_test"), load("data_y_test"), load("data_z_test")])
-labels_train = load("answers")
-labels_test = load("answers_test")
-
-print(str(length) + ", loading done, " + str(data_train.shape[1]) + " features")
+data_train = features(windows_train)
+data_test = features(windows_test)
+print(str(len(data_train)) + " training windows, loading done, " + str(data_train.shape[1]) + " features")
 
 # Classification
 
@@ -49,4 +45,4 @@ clf.fit(data_train, labels_train)
 predictions = clf.predict(data_test)
 
 print('accuracy:' + str(np.sum(predictions == labels_test)/predictions.shape[0]))
-print(classification_report(labels_test, predictions, digits = 4))
+print(classification_report(labels_test, predictions, target_names=ACTIVITIES, digits = 4))

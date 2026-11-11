@@ -4,9 +4,8 @@ import sys
 os.environ["KERAS_BACKEND"] = "torch"
 os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "2") # silences tf logs
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-FIN = os.path.dirname(HERE)
-sys.path[:0] = [HERE, FIN, os.path.join(FIN, "data-processing")]
+FIN = os.path.dirname(os.path.abspath(__file__))
+sys.path[:0] = [FIN, os.path.join(FIN, "data-processing")]
 
 import argparse
 
@@ -17,7 +16,7 @@ from sklearn.metrics import f1_score
 
 import config as cfg
 import statistical_features as ignatov # retrieve 40 statistical features extractor
-import wisdm_windowing as ww # temporal feature calc func for one axis
+import wisdm_windowing as ww # temporal feature calculation function for one axis
 
 TARGETS = ("spec_entropy", "ac_peak", "spec_peak")
 WIDTH = 64

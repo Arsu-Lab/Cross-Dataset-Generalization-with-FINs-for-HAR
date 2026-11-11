@@ -1,4 +1,3 @@
-
 import argparse
 import os
 from itertools import combinations
@@ -6,13 +5,12 @@ from itertools import combinations
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-CURVES = os.path.join(os.path.dirname(HERE), "data-scarcity", "data_scarcity_curves.npz")
+CURVES = os.path.join(HERE, "data_scarcity_curves.npz")
 OUT = os.path.join(HERE, "scarcity_panel_cm.eps")
 CM = 1 / 2.54
 SIZE = (5.86 * CM, 5.46 * 1.15 * CM)
 XMAX = 50
 
-# key, label (as in Table 2), line colour, band colour -- all from Fig. 1
 CURVE = [("fin40_pretrained", "FIN + 40, pretrained", "#2a78d6", "#dae8fc"),  # frozen-box blue / product tensor
          ("fin40_random", "FIN + 40, random init", "#d79b00", "#ffe6cc"),    # convolution outputs
          ("ignatov_cnn", "CNN (+40 stat.)", "#82b366", "#d5e8d4"),            # time-averaged tensor

@@ -1,35 +1,10 @@
-"""Cross-dataset generalization: neural models trained on one dataset and tested on the other, same data as the
-baselines of baseline/results.md.
-
-w2m: trained on WISDM users 1-26, tested on all 24 MotionSense users (WISDM users 27-36 are scored too, as the
-     in-dataset reference).
-m2w: trained on MotionSense users 1-18, tested on all 36 WISDM users and on WISDM users 27-36 (no WISDM window is
-     used for training); MotionSense users 19-24 are scored too, as the in-dataset reference.
-Every training window is used once more rotated 180 degrees about y (x and z change sign).
-
-Models, seeds 42, 0, 1, 2, 3, 60 epochs with batch 256, scored after the last epoch:
-- FIN + 40, pretrained (fin_frozen_dropout): the FIN imitates spectral entropy, AC peak and spectral peak on the
-  training windows (no labels) and stays frozen; FIN embedding of each axis + Ignatov's 40 features -> Dense 128 ->
-  dropout 0.5 -> softmax
-- FIN + 40, random init (fin_random_dropout): the same model without the imitation pretraining, the FIN trained with
-  the head from the first epoch
-- Ignatov CNN + 40: as his code runs it (ClassicML/cnn_wisdm.py), Adam 5e-4: each window is hstack(x, y, z) reshaped
-  to (200, 3), so the convolution slides along x, then y, then z with 3 consecutive samples as channels; dropout
-  drops 85 % (his keep_prob = 0.15)
-
-    python cross_dataset.py w2m          # trains, writes results/w2m.md, .npz, curves and confusion matrices
-    python cross_dataset.py m2w
-    python cross_dataset.py w2m --plot   # only redraws the figures from results/w2m.npz
-    python cross_dataset.py w2m --models ignatov_cnn   # retrains only these, merged into the existing results
-"""
 import os
 import sys
 
 os.environ["KERAS_BACKEND"] = "torch"
 HERE = os.path.dirname(os.path.abspath(__file__))
-FIN = os.path.dirname(os.path.dirname(HERE))
-sys.path[:0] = [HERE, FIN, os.path.join(FIN, "FIN-classifiers"), os.path.join(FIN, "data-processing"),
-                os.path.join(FIN, "paper-figures")]
+FIN = os.path.dirname(HERE)
+sys.path[:0] = [HERE, FIN, os.path.join(FIN, "data-processing")]
 
 import argparse
 
@@ -37,12 +12,12 @@ import numpy as np
 
 import config as cfg
 
-FORMATS = ("eps",)  # the ESANN template takes EPS only
+FORMATS = ("eps",)
 
 OUT = os.path.join(HERE, "results")
 FLIP = np.array([-1, 1, -1], np.float32)[:, None]  # 180 degrees about y
-MODELS = {"fin_frozen_dropout": ("FIN + 40, pretrained", "#2a78d6"),  # frozen FIN, head dropout 0.5
-          "fin_random_dropout": ("FIN + 40, random init", "#eb6834"),  # trained with the head, head dropout 0.5
+MODELS = {"fin_frozen_dropout": ("FIN + 40, pretrained", "#2a78d6"),
+          "fin_random_dropout": ("FIN + 40, random init", "#eb6834"),
           "ignatov_cnn": ("CNN + 40 statistical", "#7a4fc9")}
 HEAD_DROPOUT = 0.5
 DIRECTIONS = {"w2m": "WISDM -> MotionSense", "m2w": "MotionSense -> WISDM"}
@@ -50,7 +25,7 @@ CNN_LR = 5e-4
 
 
 def load(direction):
-    """Training windows (with the flipped copies) and labels, and the named test sets."""
+    """Training windows (with the flipped copies), labels and named test sets."""
     import motionsense_windowing as ms
     import wisdm_windowing as ww
 
@@ -61,10 +36,10 @@ def load(direction):
     if direction == "w2m":
         (x, y), tests = wisdm_train, {"MotionSense": (ms_windows, ms_labels), "WISDM 27-36": data["test"]}
     else:
-        held_out = ms_users >= 19  # MotionSense users 19-24, the in-dataset test
+        held_out = ms_users >= 19  # MotionSense users 19-24
         (x, y) = ms_windows[~held_out], ms_labels[~held_out]
         w_windows, _, w_labels = ww.window_raw()
-        tests = {"WISDM, all users": (w_windows, w_labels), "WISDM 27-36": data["test"],
+        tests = {"WISDM, all users": (w_windows, w_labels),
                  "MotionSense 19-24": (ms_windows[held_out], ms_labels[held_out])}
     return np.concatenate([x, x * FLIP]), np.concatenate([y, y]), tests
 
@@ -77,7 +52,7 @@ def train(direction, seeds, models=tuple(MODELS)):
     from bilin_fin_temporal_plus_original import RhythmEnsemble, RhythmFIN, ignatov_features, targets
 
     class TestAccuracy(keras.callbacks.Callback):
-        """Accuracy on every test set after every epoch; restores the RNG so training is unaffected."""
+        """Accuracy on every test set after every epoch"""
 
         def __init__(self, tests):
             super().__init__()
@@ -215,6 +190,24 @@ def report(direction, path):
     print("saved", out)
 
 
+def std_bands(ax, x, bands, alpha=0.18):
+    """Mean +- s.d. regions as opaque fills that look like alpha-blended ones (EPS has no transparency): every
+    overlap of several bands is filled with the colour those bands would blend to over white.
+    bands: list of (low, high, colour), drawn in this order."""
+    from itertools import combinations
+
+    from matplotlib.colors import to_rgb
+
+    for k in range(1, len(bands) + 1):
+        for subset in combinations(bands, k):
+            low = np.max([b[0] for b in subset], axis=0)
+            high = np.min([b[1] for b in subset], axis=0)
+            colour = np.ones(3)
+            for b in subset:
+                colour = colour * (1 - alpha) + np.array(to_rgb(b[2])) * alpha
+            ax.fill_between(x, low, high, where=high > low, interpolate=True, color=colour, linewidth=0, zorder=0.5)
+
+
 def plot(direction, path):
     """Test accuracy per epoch on the other dataset (mean +- s.d. over seeds) and the confusion matrices summed over
     seeds, row-normalised; .eps (for the ESANN template), .pdf and .png in results/."""
@@ -222,8 +215,6 @@ def plot(direction, path):
 
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-
-    from scarcity_curves import std_bands
 
     plt.rcParams.update({
         "font.family": "serif", "font.serif": ["Times New Roman", "Times", "DejaVu Serif"], "mathtext.fontset": "stix",
